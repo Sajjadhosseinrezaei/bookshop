@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import UserManager
+from utils import TimeStampedModel
 
 
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     """
     Custom User model with email as the unique identifier
     """
@@ -18,9 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False, verbose_name='کارمند')
     is_admin = models.BooleanField(default=False, verbose_name='ادمین')
     
-    created = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    updated = models.DateTimeField(auto_now=True, verbose_name='تاریخ بروزرسانی')
-    
+
     objects = UserManager()
     
     USERNAME_FIELD = 'email'
