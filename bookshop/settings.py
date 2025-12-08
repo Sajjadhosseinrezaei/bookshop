@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 
     # local apps
     
-    'accounts',
+    'accounts.apps.AccountsConfig',
+    'utils',
 
 ]
 
@@ -132,3 +133,20 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
+
+
+
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
