@@ -45,3 +45,32 @@ class User(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
         Return the short name for the user
         """
         return self.first_name if self.first_name else self.email
+
+
+
+
+# models.py
+class Address(TimeStampedModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
+    
+    title = models.CharField("عنوان آدرس", max_length=100, blank=True)  # خانه، محل کار
+    recipient_name = models.CharField("نام گیرنده", max_length=100)
+    recipient_phone = models.CharField("موبایل گیرنده", max_length=11)
+
+    province = models.CharField("استان", max_length=50)
+    city = models.CharField("شهر", max_length=50)
+    street = models.TextField("آدرس کامل (خیابان، کوچه، پلاک، واحد و ...)")
+    postal_code = models.CharField("کد پستی", max_length=10, blank=True)
+
+    is_default = models.BooleanField("آدرس پیش‌فرض", default=False)
+
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            Address.objects.filter(user=self.user).update(is_default=False)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.recipient_name} - {self.city}"
+
+    class Meta:
+        verbose_name_plural = "آدرس‌ها"
