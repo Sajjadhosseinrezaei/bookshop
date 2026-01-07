@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'orders.apps.OrdersConfig',
+    'home.apps.HomeConfig',
     'utils',
 
 ]
