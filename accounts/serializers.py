@@ -1,34 +1,66 @@
-from .models import User, Address
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+class UserCreateSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(
+        write_only=True,
+        min_length=8
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password']
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+            "image",
+            "password",
+        )
 
     def create(self, validated_data):
         return User.objects.create_user(
-            first_name=validated_data.get('first_name'),
-            last_name=validated_data.get('last_name'),
-            email=validated_data.get('email'),
-            password=validated_data.get('password')
+            email=validated_data["email"],
+            password=validated_data["password"],
+            first_name=validated_data.get("first_name", ""),
+            last_name=validated_data.get("last_name", ""),
+            image=validated_data.get("image"),
         )
 
-    
+
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "image", "password")
+
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
 
-        # آپدیت بقیه فیلدها
-        instance = super().update(instance, validated_data)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
-        # اگر پسورد وجود داشت، هش کن
         if password:
             instance.set_password(password)
-            instance.save()
 
+        instance.save()
         return instance
+    
 
+class UserProfileSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = User
+        fields = (
+            "email",
+            "first_name",
+            "last_name",
+            "image",
+            "created",
+        )
